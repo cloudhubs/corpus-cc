@@ -31,7 +31,7 @@ public class IfStmtHandler extends BaseHandler {
             }
         }
         if(expr.getElseStmt().isPresent()) {
-            tokens.add(new BCEToken("ELSE", node));
+            tokens.add(new BCEToken("ELSE", node.getClass().getSimpleName()));
             Node elseStmt = expr.getElseStmt().get();
             for (Node child : elseStmt.getChildNodes()) {
                 handler = HandlerFactory.getHandler(child);

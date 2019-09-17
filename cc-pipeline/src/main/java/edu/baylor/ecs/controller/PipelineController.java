@@ -2,6 +2,7 @@ package edu.baylor.ecs.controller;
 
 import edu.baylor.ecs.models.DiscoveryRequest;
 import edu.baylor.ecs.models.MethodRepresentation;
+import edu.baylor.ecs.service.GithubService;
 import edu.baylor.ecs.service.MethodService;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +23,22 @@ public class PipelineController {
 
     private final MethodService methodService;
     private final RestTemplate restTemplate;
+    private final GithubService githubService;
 
-    public PipelineController(MethodService methodService, RestTemplate restTemplate) {
+    public PipelineController(MethodService methodService, RestTemplate restTemplate, GithubService githubService) {
         this.methodService = methodService;
         this.restTemplate = restTemplate;
+        this.githubService = githubService;
     }
 
     @GetMapping("/handshake")
     public String home() {
         return "Hello from [PipelineController]";
+    }
+
+    @GetMapping("/refresh")
+    public void refresh() throws IOException {
+        this.githubService.cloneRepositories();
     }
 
     @PostMapping("/generateCorpus")

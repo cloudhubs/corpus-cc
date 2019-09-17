@@ -35,7 +35,7 @@ public class MethodCallExprHandler extends BaseHandler {
         }
 
         for(Node n : expr.getArguments()){
-            tokens.add(new BCEToken("PARAMETER", node));
+            tokens.add(new BCEToken("PARAMETER", node.getClass().getSimpleName()));
         }
         return tokens;
     }

@@ -16,7 +16,7 @@ public class ForStmtHandler extends BaseHandler {
     public List<BCEToken> handle(Node node) {
         List<BCEToken> tokens = new ArrayList<>();
         ForStmt forStmt = (ForStmt)node;
-        tokens.add(new BCEToken("FOR", node));
+        tokens.add(new BCEToken("FOR", node.getClass().getSimpleName()));
         List<Expression> initialization = forStmt.getInitialization();
         for (Node child : initialization) {
             BaseHandler handler = HandlerFactory.getHandler(child);
@@ -26,7 +26,7 @@ public class ForStmtHandler extends BaseHandler {
                 System.out.println(child.getClass().getSimpleName());
             }
         }
-        tokens.add(new BCEToken(";", node));
+        tokens.add(new BCEToken(";", node.getClass().getSimpleName()));
 
         Optional<Expression> compareOpt = forStmt.getCompare();
         if(compareOpt.isPresent()){
@@ -39,7 +39,7 @@ public class ForStmtHandler extends BaseHandler {
                 System.out.println(compare.getClass().getSimpleName());
             }
         }
-        tokens.add(new BCEToken(";", node));
+        tokens.add(new BCEToken(";", node.getClass().getSimpleName()));
 
         List<Expression> update = forStmt.getUpdate();
         for (Node child : update) {
@@ -50,7 +50,7 @@ public class ForStmtHandler extends BaseHandler {
                 System.out.println(child.getClass().getSimpleName());
             }
         }
-        tokens.add(new BCEToken("DO", node));
+        tokens.add(new BCEToken("DO", node.getClass().getSimpleName()));
 
         Node body = forStmt.getBody();
         BaseHandler handler = HandlerFactory.getHandler(body);

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface MethodRepository extends MongoRepository<MethodRepresentation, String> {
 
-    public List<MethodRepresentation> getBySimilarity();
+    //public List<MethodRepresentation> getBySimilarity();
 
 }

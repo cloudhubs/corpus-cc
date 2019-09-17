@@ -4,6 +4,7 @@ import edu.baylor.ecs.models.MethodRepresentation;
 import edu.baylor.ecs.repository.MethodRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +29,7 @@ public class MethodService {
         }
 
         public List<MethodRepresentation> findBySimilarity(){
-            return methodRepository.getBySimilarity();
+            //return methodRepository.getBySimilarity();
+            return new ArrayList<>();
         }
 }

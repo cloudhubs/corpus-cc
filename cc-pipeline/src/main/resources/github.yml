@@ -1,0 +1,4 @@
+path: "E:\\Programs\\corpus-cc\\sink\\"
+urls:
+  - "https://github.com/apache/maven-dependency-plugin"
+  - "https://github.com/walker76/stackoversight"

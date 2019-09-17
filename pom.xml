@@ -10,15 +10,16 @@
     <description>Corpus based code clone detection</description>
     <packaging>pom</packaging>
 
+    <properties>
+        <maven.compiler.source>12</maven.compiler.source>
+        <maven.compiler.target>12</maven.compiler.target>
+    </properties>
+
     <modules>
         <module>cc-discovery</module>
         <module>cc-tokenizer</module>
         <module>cc-detection</module>
         <module>cc-pipeline</module>
     </modules>
-
-    <properties>
-        <java.version>12</java.version>
-    </properties>
 
 </project>
