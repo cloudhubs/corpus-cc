@@ -49,7 +49,7 @@ public class CloneService {
             if(rep.getBareHash().equals(methodRepresentation.getBareHash()) ||
                rep.getTrimmedHash().equals(methodRepresentation.getTrimmedHash()) ||
                rep.getFullHash().equals(methodRepresentation.getFullHash())){
-                return new Clone(methodRepresentation.getName(), CodeCloneType.ONE);
+                return new Clone(methodRepresentation.getName(), CodeCloneType.TWO);
             }
 
             // iterate on bagA

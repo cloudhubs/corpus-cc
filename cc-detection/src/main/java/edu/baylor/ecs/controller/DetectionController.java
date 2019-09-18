@@ -22,7 +22,7 @@ public class DetectionController {
 
     @GetMapping("/handshake")
     public String home() {
-        return "Hello from [PipelineApplication]";
+        return "Hello from [DetectionApplication]";
     }
 
     @PostMapping("/findClones")
