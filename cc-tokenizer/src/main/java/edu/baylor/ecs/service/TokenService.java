@@ -4,6 +4,7 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
 import edu.baylor.ecs.handlers.BaseHandler;
 import edu.baylor.ecs.handlers.HandlerFactory;
 import edu.baylor.ecs.models.BCEToken;
@@ -11,10 +12,7 @@ import edu.baylor.ecs.models.MethodRepresentation;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TokenService {
@@ -29,34 +27,47 @@ public class TokenService {
 
     public List<MethodRepresentation> tokenizeFiles(List<String> files) throws IOException {
         List<MethodRepresentation> reps = new ArrayList<>();
+        int count = 0;
         for(String file : files) {
+            if(isIgnorableFile(file)){
+                count++;
+                continue;
+            }
+
+            System.out.println(String.format("FILE (%d / %d ) - %s", count, files.size(), file));
             String javaContent = fileService.readFile(file);
             CompilationUnit compilationUnit;
             try {
                 compilationUnit = StaticJavaParser.parse(javaContent);
             } catch(Exception e){
-                e.printStackTrace();
+                System.err.println("Cannot parse " + file);
                 continue;
             }
             List<Node> roots = compilationUnit.getChildNodes();
             for(Node root : roots) {
                 List<Node> methodDeclarations = treeService.extractNodes(root, MethodDeclaration.class);
                 for(Node dec : methodDeclarations) {
-                    String method_name = ((MethodDeclaration) dec).getName().getIdentifier();
+                    String methodName = ((MethodDeclaration) dec).getName().getIdentifier();
 
-                    if (method_name.startsWith("set") || method_name.startsWith("get") || method_name.startsWith("is")) {
+                    if (isIgnorableMethod(methodName)){
                         continue;
                     }
 
+                    System.out.println("\tMETHOD - " + methodName);
                     MethodRepresentation rep = new MethodRepresentation();
-                    rep.setName(method_name);
-                    String raw = ((MethodDeclaration)dec).toString();
+                    Optional<BlockStmt> bodyOptional = ((MethodDeclaration)dec).getBody();
+                    if(bodyOptional.isEmpty()){
+                        continue;
+                    }
+                    Node body = bodyOptional.get();
+                    rep.setName(methodName);
+                    String raw = body.toString();
                     rep.setRaw(raw);
                     fileService.countLines(rep);
                     fileService.hash(rep);
-                    BaseHandler handler = HandlerFactory.getHandler(dec);
+                    BaseHandler handler = HandlerFactory.getHandler(body);
                     if (handler != null) {
-                        List<BCEToken> tokens = new ArrayList<>(handler.handle(dec));
+                        List<BCEToken> tokens = new ArrayList<>(handler.handle(body));
                         Map<String, Integer> zip = TokenService.zipTokens(tokens);
                         rep.setTokens(tokens);
                         rep.setZip(zip);
@@ -68,6 +79,7 @@ public class TokenService {
                     reps.add(rep);
                 }
             }
+            count++;
         }
         return reps;
     }
@@ -88,5 +100,16 @@ public class TokenService {
             }
         }
         return count;
+    }
+
+    private boolean isIgnorableMethod(String methodName){
+        return methodName.startsWith("get") || methodName.startsWith("set")
+                || methodName.startsWith("is") || methodName.equals("equals")
+                || methodName.equals("hashCode") || methodName.equals("toString");
+    }
+
+    private boolean isIgnorableFile(String fileName){
+        return fileName.contains("\\src\\test") || fileName.contains("Test")
+                || fileName.contains("Tester");
     }
 }

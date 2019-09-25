@@ -10,26 +10,25 @@ import java.util.List;
 @Service
 public class MethodService {
 
-        private MethodRepository methodRepository;
+    private MethodRepository methodRepository;
 
-        public MethodService(MethodRepository methodRepository) {
-            this.methodRepository = methodRepository;
-        }
+    public MethodService(MethodRepository methodRepository) {
+        this.methodRepository = methodRepository;
+    }
 
-        public MethodRepresentation save(MethodRepresentation book) {
-            return methodRepository.save(book);
-        }
+    public MethodRepresentation save(MethodRepresentation book) {
+        return methodRepository.save(book);
+    }
 
-        public void delete(MethodRepresentation book) {
-            methodRepository.delete(book);
-        }
+    public void delete(MethodRepresentation book) {
+        methodRepository.delete(book);
+    }
 
-        public Iterable<MethodRepresentation> findAll() {
-            return methodRepository.findAll();
-        }
+    public Iterable<MethodRepresentation> findAll() {
+        return methodRepository.findAll();
+    }
 
-        public List<MethodRepresentation> findBySimilarity(){
-            //return methodRepository.getBySimilarity();
-            return new ArrayList<>();
-        }
+    Iterable<MethodRepresentation> getByHeuristics(int fileLineMin, int fileLineMax, int uniqueTokensMin, int uniqueTokensMax) {
+            return methodRepository.getDistinctByFileLinesBetweenAndUniqueTokensBetween(fileLineMin, fileLineMax, uniqueTokensMin, uniqueTokensMax);
+    }
 }

@@ -6,19 +6,13 @@ import edu.baylor.ecs.handlers.comment.LineCommentHandler;
 import edu.baylor.ecs.handlers.declaration.*;
 import edu.baylor.ecs.handlers.expr.*;
 import edu.baylor.ecs.handlers.literal.*;
-import edu.baylor.ecs.handlers.misc.ArrayCreationLevelHandler;
-import edu.baylor.ecs.handlers.misc.CatchClauseHandler;
-import edu.baylor.ecs.handlers.misc.ModifierHandler;
-import edu.baylor.ecs.handlers.misc.SwitchEntryHandler;
+import edu.baylor.ecs.handlers.misc.*;
 import edu.baylor.ecs.handlers.name.NameHandler;
 import edu.baylor.ecs.handlers.name.SimpleNameHandler;
 import edu.baylor.ecs.handlers.parameter.ParameterHandler;
 import edu.baylor.ecs.handlers.parameter.TypeParameterHandler;
 import edu.baylor.ecs.handlers.stmt.*;
-import edu.baylor.ecs.handlers.type.ArrayTypeHandler;
-import edu.baylor.ecs.handlers.type.ClassOrInterfaceTypeHandler;
-import edu.baylor.ecs.handlers.type.PrimitiveTypeHandler;
-import edu.baylor.ecs.handlers.type.VoidTypeHandler;
+import edu.baylor.ecs.handlers.type.*;
 
 public class HandlerFactory {
     public static BaseHandler getHandler(Node n){
@@ -92,6 +86,12 @@ public class HandlerFactory {
             case "LocalClassDeclarationStmt": return new LocalClassDeclarationStmtHandler();
             case "ExplicitConstructorInvocationStmt": return new ExplicitConstructorInvocationStmtHandler();
             case "BlockComment": return new BlockCommentHandler();
+            case "LambdaExpr": return new LambdaExprHandler();
+            case "UnknownType": return new UnknownTypeHandler();
+            case "MethodReferenceExpr": return new MethodReferenceExprHandler();
+            case "UnionType": return new UnionTypeHandler();
+            case "JavadocComment": return new JavadocCommentHandler();
+            case "TypeExpr": return new TypeExprHandler();
             default:
                 System.err.println(n.getClass().getSimpleName());
                 System.exit(-1);

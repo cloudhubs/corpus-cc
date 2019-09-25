@@ -20,28 +20,31 @@ public class CloneService {
     private final MethodService methodService;
     private final RestTemplate restTemplate;
 
-    private final boolean useJaccardSimilarity = true;
-    private final double th = 0.1;
-    private final Integer MUL_FACTOR = 100;
+    private final double th = 10;
+    private final Integer MUL_FACTOR = 2;
 
     public CloneService(MethodService methodService, RestTemplate restTemplate){
         this.methodService = methodService;
         this.restTemplate = restTemplate;
     }
 
-    public Clone findClone(MethodRepresentation methodRepresentation){
-        List<MethodRepresentation> similar = methodService.findBySimilarity();
+    private Clone findClone(MethodRepresentation methodRepresentation){
+        double threshold = 0.05;
+
+        int fileLines = methodRepresentation.getFileLines();
+        int uniqueTokens = methodRepresentation.getUniqueTokens();
+        int fileLinesMin = (int) Math.floor(Math.max(fileLines - fileLines * threshold, 0));
+        int fileLinesMax = (int) Math.ceil(fileLines + fileLines * threshold);
+        int uniqueTokensMin = (int) Math.floor(Math.max(uniqueTokens - uniqueTokens * threshold, 0));
+        int uniqueTokensMax = (int) Math.ceil(uniqueTokens + uniqueTokens * threshold);
+        Iterable<MethodRepresentation> similar = methodService.getByHeuristics(fileLinesMin, fileLinesMax, uniqueTokensMin, uniqueTokensMax);
         for(MethodRepresentation rep : similar){
-            int computedThreshold;
-            if (useJaccardSimilarity) {
-                computedThreshold = (int) Math.ceil((this.th * (rep.getTokens().size() + methodRepresentation.getTokens().size())) / (10 * this.MUL_FACTOR + this.th));
-            } else {
-                int maxLength = Math.max(rep.getTokens().size(), methodRepresentation.getTokens().size());
-                computedThreshold = (int) Math.ceil((this.th * maxLength) / (10 * this.MUL_FACTOR));
-            }
+
+            int computedThreshold = (int) Math.ceil((this.th * (rep.getTokens().size() + methodRepresentation.getTokens().size())) / (10 * this.MUL_FACTOR + this.th));
 
             // Exact String Type 1
             if(rep.getRaw().equals(methodRepresentation.getRaw())){
+                System.out.println("\t" + methodRepresentation.getName() + " - " + rep.getName() + " - " + computedThreshold);
                 return new Clone(methodRepresentation.getName(), CodeCloneType.ONE);
             }
 
@@ -49,6 +52,7 @@ public class CloneService {
             if(rep.getBareHash().equals(methodRepresentation.getBareHash()) ||
                rep.getTrimmedHash().equals(methodRepresentation.getTrimmedHash()) ||
                rep.getFullHash().equals(methodRepresentation.getFullHash())){
+                System.out.println("\t" + methodRepresentation.getName() + " - " + rep.getName() + " - " + computedThreshold);
                 return new Clone(methodRepresentation.getName(), CodeCloneType.TWO);
             }
 
@@ -62,6 +66,7 @@ public class CloneService {
                         count += Math.min(tokenFrequencyA.getValue(), tokenFrequencyB.getValue());
                         if (count >= computedThreshold) {
                             // report clone.
+                            System.out.println("\t" + methodRepresentation.getName() + " - " + rep.getName() + " - " + computedThreshold);
                             return new Clone(methodRepresentation.getName(), CodeCloneType.THREE);
                         }
                     }
@@ -81,11 +86,14 @@ public class CloneService {
         if(filesResponse.getStatusCode() == HttpStatus.OK){
             List<MethodRepresentation> methods = Objects.requireNonNull(filesResponse.getBody());
             List<Clone> clones = new ArrayList<>();
+            int count = 0;
             for(MethodRepresentation entry : methods){
+                System.out.println(String.format("REP (%d / %d )", count, methods.size()));
                 Clone clone = findClone(entry);
                 if(clone != null){
                     clones.add(clone);
                 }
+                count++;
             }
             return clones;
         }

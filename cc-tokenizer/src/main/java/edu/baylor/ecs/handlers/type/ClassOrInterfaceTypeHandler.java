@@ -21,6 +21,9 @@ public class ClassOrInterfaceTypeHandler extends BaseHandler {
             case "MethodDeclaration": tokens.add(new BCEToken("RETURN_TYPE", node.getClass().getSimpleName())); break;
             case "MethodCallExpr":
             case "ClassOrInterfaceDeclaration":
+            case "MethodReferenceExpr":
+            case "UnionType":
+            case "TypeExpr":
             case "ClassExpr": tokens.add(new BCEToken("CLASS_TYPE", node.getClass().getSimpleName())); break;
             case "CastExpr": tokens.add(new BCEToken("CAST_TYPE", node.getClass().getSimpleName())); break;
             case "ArrayType":

@@ -43,6 +43,7 @@ public class PipelineController {
 
     @PostMapping("/generateCorpus")
     public void generateCorpus(@RequestBody DiscoveryRequest request){
+        Iterable<MethodRepresentation> list = this.methodService.findAll();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         String url = "http://localhost:7002/tokens";
@@ -51,9 +52,9 @@ public class PipelineController {
         if(filesResponse.getStatusCode() == HttpStatus.OK){
             List<MethodRepresentation> methods = Objects.requireNonNull(filesResponse.getBody());
             for(MethodRepresentation rep : methods){
+                System.out.println("SAVING - " + rep.getName());
                 this.methodService.save(rep);
             }
-
         }
     }
 
