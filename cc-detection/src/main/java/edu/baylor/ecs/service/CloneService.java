@@ -53,6 +53,10 @@ public class CloneService {
                rep.getTrimmedHash().equals(methodRepresentation.getTrimmedHash()) ||
                rep.getFullHash().equals(methodRepresentation.getFullHash())){
                 System.out.println("\t" + methodRepresentation.getName() + " - " + rep.getName() + " - " + computedThreshold);
+                return new Clone(methodRepresentation.getName(), CodeCloneType.ONE);
+            }
+
+            if(rep.getZip().equals(methodRepresentation.getZip())){
                 return new Clone(methodRepresentation.getName(), CodeCloneType.TWO);
             }
 
