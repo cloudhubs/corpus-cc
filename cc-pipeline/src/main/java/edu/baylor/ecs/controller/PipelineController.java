@@ -52,7 +52,7 @@ public class PipelineController {
         if(filesResponse.getStatusCode() == HttpStatus.OK){
             List<MethodRepresentation> methods = Objects.requireNonNull(filesResponse.getBody());
             for(MethodRepresentation rep : methods){
-                System.out.println("SAVING - " + rep.getName());
+                System.out.println("SAVING - " + rep.getClassName() + "#" + rep.getMethodName());
                 this.methodService.save(rep);
             }
         }
@@ -61,5 +61,23 @@ public class PipelineController {
     @PostMapping("/addToCorpus")
     public MethodRepresentation addToCorpus(@RequestBody MethodRepresentation request){
         return this.methodService.save(request);
+    }
+
+    @PostMapping("/generateFromSnippets")
+    public void generateFromSnippets(@RequestBody DiscoveryRequest request){
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = "http://localhost:7002/tokensFromSnippets";
+        HttpEntity<Object> requestEntity = new HttpEntity<>(request, headers);
+        ResponseEntity<List<MethodRepresentation>> filesResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity,new ParameterizedTypeReference<>() {});
+
+        if(filesResponse.getStatusCode() == HttpStatus.OK){
+            List<MethodRepresentation> methods = Objects.requireNonNull(filesResponse.getBody());
+            for(MethodRepresentation rep : methods){
+                System.out.println("SAVING - " + rep.getClassName() + "#" + rep.getMethodName());
+                this.methodService.save(rep);
+            }
+        }
     }
 }

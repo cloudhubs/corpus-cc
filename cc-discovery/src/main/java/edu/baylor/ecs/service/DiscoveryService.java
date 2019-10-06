@@ -21,4 +21,8 @@ public class DiscoveryService {
     public List<String> findAllJarFiles(String baseFolder, int depth) {
         return directoryService.getResourcePaths(baseFolder, depth, ".jar");
     }
+
+    public List<String> findAllSnippetFiles(String baseFolder, int depth) {
+        return directoryService.getResourcePaths(baseFolder, depth, ".json");
+    }
 }

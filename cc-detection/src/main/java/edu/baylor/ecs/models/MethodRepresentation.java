@@ -9,9 +9,9 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "github")
 public class MethodRepresentation {
-    private String name;
+    private String className;
+    private String methodName;
     private List<BCEToken> tokens;
     private Map<String, Integer> zip;
     private int uniqueTokens;
