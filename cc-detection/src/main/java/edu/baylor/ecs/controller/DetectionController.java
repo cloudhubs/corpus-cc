@@ -30,7 +30,11 @@ public class DetectionController {
 
     @PostMapping("/findRankedClones")
     public SeverityRanking findRankedClones(@RequestBody DiscoveryRequest request){
-        return new SeverityRanking(this.cloneService.findClonesForRepository(request));
+        SeverityRanking severityRanking = new SeverityRanking(this.cloneService.findClonesForRepository(request));
+        System.out.println("LOW - " + severityRanking.getLowSeverityClones().size());
+        System.out.println("MEDIUM - " + severityRanking.getMediumSeverityClones().size());
+        System.out.println("HIGH - " + severityRanking.getHighSeverityClones().size());
+        return severityRanking;
     }
 
     @PostMapping("/severity")

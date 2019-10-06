@@ -27,6 +27,11 @@ public class DiscoveryController {
         return this.discoveryService.findAllSourceFiles(request.getBaseFolder(), request.getDepth());
     }
 
+    @PostMapping("/snippetFiles")
+    public List<String> retrieveSnippetFiles(@RequestBody DiscoveryRequest request){
+        return this.discoveryService.findAllSnippetFiles(request.getBaseFolder(), request.getDepth());
+    }
+
     @PostMapping("/jarFiles")
     public List<String> retrieveJarFiles(@RequestBody DiscoveryRequest request){
         return this.discoveryService.findAllJarFiles(request.getBaseFolder(), request.getDepth());

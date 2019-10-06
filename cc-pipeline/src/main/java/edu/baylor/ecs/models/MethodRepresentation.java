@@ -10,7 +10,6 @@ import java.util.Map;
 
 @Data
 @NoArgsConstructor
-@Document(collection = "github")
 public class MethodRepresentation {
     private String className;
     private String methodName;

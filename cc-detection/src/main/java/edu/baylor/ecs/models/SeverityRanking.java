@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,10 @@ public class SeverityRanking {
     private List<Clone> highSeverityClones;
 
     public SeverityRanking(List<Clone> clones) {
+        lowSeverityClones = new ArrayList<>();
+        mediumSeverityClones = new ArrayList<>();
+        highSeverityClones = new ArrayList<>();
+
         for(Clone clone : clones){
             double severityScore = computeSeverityScore(clone);
             if(severityScore > HIGH_THRESHOLD){

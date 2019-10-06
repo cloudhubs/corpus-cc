@@ -43,4 +43,18 @@ public class TokenizerController {
         }
         return new ArrayList<>();
     }
+
+    @PostMapping("/tokensFromSnippets")
+    public List<MethodRepresentation> tokensFromSnippets(@RequestBody DiscoveryRequest request) throws IOException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        String url = "http://localhost:7001/snippetFiles";
+        HttpEntity<Object> requestEntity = new HttpEntity<>(request, headers);
+        ResponseEntity<List<String>> filesResponse = restTemplate.exchange(url, HttpMethod.POST, requestEntity, new ParameterizedTypeReference<>() {});
+        if(filesResponse.getStatusCode() == HttpStatus.OK){
+            List<String> files = Objects.requireNonNull(filesResponse.getBody());
+            return tokenService.tokenizeSnippets(files);
+        }
+        return new ArrayList<>();
+    }
 }
