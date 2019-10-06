@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Clone {
-    private String MethodName;
+    private MethodRepresentation methodRepresentationA;
+    private MethodRepresentation methodRepresentationB;
     private CodeCloneType type;
 }

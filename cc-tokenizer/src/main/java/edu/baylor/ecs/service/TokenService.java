@@ -3,6 +3,8 @@ package edu.baylor.ecs.service;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import edu.baylor.ecs.handlers.BaseHandler;
@@ -47,20 +49,30 @@ public class TokenService {
             for(Node root : roots) {
                 List<Node> methodDeclarations = treeService.extractNodes(root, MethodDeclaration.class);
                 for(Node dec : methodDeclarations) {
+                    MethodRepresentation rep = new MethodRepresentation();
                     String methodName = ((MethodDeclaration) dec).getName().getIdentifier();
+                    Optional<Node> parent = dec.getParentNode();
+                    String parentName = "Undetermined";
+                    if(parent.isPresent()){
+                        if(parent.get() instanceof ClassOrInterfaceDeclaration) {
+                            parentName = ((ClassOrInterfaceDeclaration) parent.get()).getNameAsString();
+                        } else if (parent.get() instanceof EnumDeclaration){
+                            parentName = ((EnumDeclaration) parent.get()).getNameAsString();
+                        }
+                    }
+                    rep.setClassName(parentName);
 
                     if (isIgnorableMethod(methodName)){
                         continue;
                     }
 
                     System.out.println("\tMETHOD - " + methodName);
-                    MethodRepresentation rep = new MethodRepresentation();
                     Optional<BlockStmt> bodyOptional = ((MethodDeclaration)dec).getBody();
                     if(bodyOptional.isEmpty()){
                         continue;
                     }
                     Node body = bodyOptional.get();
-                    rep.setName(methodName);
+                    rep.setMethodName(methodName);
                     String raw = body.toString();
                     rep.setRaw(raw);
                     fileService.countLines(rep);

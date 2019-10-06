@@ -52,7 +52,7 @@ public class PipelineController {
         if(filesResponse.getStatusCode() == HttpStatus.OK){
             List<MethodRepresentation> methods = Objects.requireNonNull(filesResponse.getBody());
             for(MethodRepresentation rep : methods){
-                System.out.println("SAVING - " + rep.getName());
+                System.out.println("SAVING - " + rep.getClassName() + "#" + rep.getMethodName());
                 this.methodService.save(rep);
             }
         }
